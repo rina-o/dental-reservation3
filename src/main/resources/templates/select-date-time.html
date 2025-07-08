@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>日付と時間の選択</title>
+</head>
+<body>
+<h2>予約日と時間の選択</h2>
+
+<form th:action="@{${actionUrl}}" method="post">
+    <!-- 日付選択 -->
+    <label for="selectedDate">日付を選択：</label>
+    <select name="selectedDate" id="selectedDate" required>
+        <option th:each="date : ${availableDates}"
+                th:value="${date}"
+                th:text="${date}"
+                th:selected="${selectedDate} == ${date}">
+        </option>
+    </select>
+    <button type="submit">空き時間を表示</button>
+</form>
+
+<!-- 時間選択 -->
+<div th:if="${availableTimes != null}">
+    <form th:action="@{${confirmUrl}}" method="post">
+        <p>空いている時間帯：</p>
+        <div th:each="time : ${availableTimes}">
+            <input type="radio" name="selectedTime" th:value="${time}" required>
+            <label th:text="${time}"></label><br>
+        </div>
+        <button type="submit">確認画面へ</button>
+    </form>
+</div>
+
+<br>
+<a th:href="@{/}">TOPに戻る</a>
+</body>
+</html>

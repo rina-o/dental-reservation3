@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約種別選択</title>
+</head>
+<body>
+<p th:if="${loginPatient != null}" th:text="${loginPatient.name + 'さん、こんにちは！'}"></p>
+<p th:if="${loginPatient == null}">こんにちは、ゲストさん！</p>
+
+<p>本日はどうされましたか？</p>
+
+<form th:action="@{/select-treatment}" method="post">
+    <button type="submit" name="type" value="treatment">治療の続き</button>
+    <button type="submit" name="type" value="checkup">定期検診</button>
+    <br><br>
+
+
+</form>
+
+<br>
+<a th:href="@{/}">TOPに戻る</a>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">ログアウト</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>初めての方へ</title>
+</head>
+<body>
+<h2>初めての方はこちら</h2>
+
+<p>治療内容を選び、希望の予約日時をお選びください。</p>
+<form th:action="@{/new-patient/select-treatment}" method="post">
+    <button type="submit" name="type" value="treatment">治療を希望</button><br><br>
+    <button type="submit" name="type" value="checkup">定期検診を希望</button>
+</form>
+
+<br>
+<a th:href="@{/menu}">← メニューに戻る</a>
+</body>
+</html>

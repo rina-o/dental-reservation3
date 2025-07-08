@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約確認ログイン</title>
+</head>
+<body>
+<h2>予約確認・変更（再診者専用）</h2>
+
+<form th:action="@{/check-login}" method="post">
+    <label for="email">メールアドレス：</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="birthday">誕生日（4桁・例：0701）：</label><br>
+    <input type="text" id="birthday" name="birthday" pattern="\\d{4}" maxlength="4" required><br><br>
+
+    <button type="submit">ログインして予約確認へ</button>
+</form>
+
+<!-- ログイン失敗メッセージ -->
+<p th:if="${error}" th:text="${error}" style="color: red;"></p>
+
+<br>
+<a th:href="@{/menu}">戻る</a>
+</body>
+</html>

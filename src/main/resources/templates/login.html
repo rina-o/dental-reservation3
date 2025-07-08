@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+</head>
+<body>
+<h2>ログイン</h2>
+
+<form th:action="@{/login}" method="post">
+    <!-- メールアドレスまたは患者番号 -->
+    <input type="text" name="emailOrId" placeholder="メールまたは患者番号" required><br>
+
+    <!-- 生年月日8桁 -->
+    <input type="text" name="birthday" placeholder="生年月日（例:19900901）" required><br>
+
+    <!-- リダイレクト先（ボタンによって変更） -->
+    <input type="hidden" name="redirect" th:value="${redirect ?: '/select-treatment'}">
+
+    <button type="submit">ログイン</button>
+</form>
+
+<!-- ログインエラーがある場合 -->
+<div th:if="${loginError}" style="color:red;">
+    <p th:text="${loginError}"></p>
+</div>
+
+<br>
+<a th:href="@{/}">TOPに戻る</a>
+</body>
+</html>

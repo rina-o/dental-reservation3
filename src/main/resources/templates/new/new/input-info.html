@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新患情報入力</title>
+</head>
+<body>
+<h2>患者情報の入力</h2>
+
+<form th:action="@{/new/input-info}" method="post">
+    <input type="hidden" name="selectedDate" th:value="${selectedDate}">
+    <input type="hidden" name="selectedTime" th:value="${selectedTime}">
+    <input type="hidden" name="reservationType" th:value="${reservationType}">
+    <input type="hidden" name="memo" th:value="${memo}">
+
+    <label>お名前：</label><br>
+    <input type="text" name="name" required><br><br>
+
+    <label>メールアドレス：</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>電話番号：</label><br>
+    <input type="tel" name="phone" required><br><br>
+
+    <label>生年月日（例：19890101）：</label><br>
+    <input type="text" name="birthday" pattern="\\d{8}" required><br><br>
+
+    <button type="submit">確認画面へ</button>
+</form>
+
+<br>
+<a th:href="@{/}">TOPへ戻る</a>
+</body>
+</html>

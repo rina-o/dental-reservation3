@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約確認・変更</title>
+</head>
+<body>
+<h2>予約内容の確認</h2>
+
+<!-- 名前表示 -->
+<p th:text="${loginPatient.name} + ' さんの現在の予約'"></p>
+
+<!-- 予約がある場合 -->
+<div th:if="${reservations != null}">
+    <div th:each="res : ${reservations}">
+        <p>日付：<span th:text="${res.reservationDate}"></span></p>
+        <p>時間：<span th:text="${res.reservationTime}"></span></p>
+        <p>種別：<span th:text="${res.type == 'treatment' ? '治療' : '定期検診'}"></span></p>
+        <p>メモ：<span th:text="${res.memo != null ? res.memo : '-'}"></span></p>
+        <form th:action="@{/reservation/cancel}" method="post">
+            <input type="hidden" name="reservationId" th:value="${res.id}">
+            <button type="submit">キャンセル</button>
+        </form>
+        <hr>
+    </div>
+</div>
+
+
+<!-- 予約がない場合 -->
+<div th:if="${reservation == null}">
+    <p>現在予約はありません。</p>
+</div>
+<td>
+    <form th:action="@{/reservation/cancel}" method="post">
+        <button type="submit">キャンセル</button>
+    </form>
+</td>
+
+<br>
+<a th:href="@{/}">TOPに戻る</a>
+</body>
+</html>

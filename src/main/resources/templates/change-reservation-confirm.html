@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約変更の確認</title>
+</head>
+<body>
+<h2>予約変更の確認</h2>
+
+<p>【現在の予約内容】</p>
+<ul>
+    <li>日付：<span th:text="${oldDate}"></span></li>
+    <li>時間：<span th:text="${oldTime}"></span></li>
+</ul>
+
+<p>【変更後の予約内容】</p>
+<ul>
+    <li>日付：<span th:text="${newDate}"></span></li>
+    <li>時間：<span th:text="${newTime}"></span></li>
+</ul>
+
+<p style="color:red;">このまま進むと、現在の予約はキャンセルされ、新しい予約に変更されます。</p>
+
+<form th:action="@{/reservation/change/finalize}" method="post">
+    <input type="hidden" name="newDate" th:value="${newDate}">
+    <input type="hidden" name="newTime" th:value="${newTime}">
+    <button type="submit">予約を変更する</button>
+</form>
+
+<br>
+<form th:action="@{/reservation/check-reservation}" method="get">
+    <button type="submit">戻る</button>
+</form>
+</body>
+</html>

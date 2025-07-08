@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約完了</title>
+</head>
+<body>
+<p th:text="${completeMessage}">予約が完了しました。</p>
+
+<p>以下の内容で予約を受け付けました。</p>
+<ul>
+    <li>日付：<span th:text="${reservedDate}"></span></li>
+    <li>時間：<span th:text="${reservedTime}"></span></li>
+</ul>
+
+<form th:action="@{/}" method="get">
+    <button type="submit">トップページへ戻る</button>
+</form>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">ログアウト</button>
+</form>
+
+</body>
+</html>

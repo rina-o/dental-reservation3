@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約内容の確認（新患）</title>
+</head>
+<body>
+<h2>予約内容の確認</h2>
+
+<p>以下の内容で予約を行います。よろしければ「予約を確定する」を押してください。</p>
+
+<ul>
+    <li>お名前：<span th:text="${patientName}"></span></li>
+    <li>メールアドレス：<span th:text="${email}"></span></li>
+    <li>電話番号：<span th:text="${phoneNumber}"></span></li>
+    <li>予約日：<span th:text="${selectedDate}"></span></li>
+    <li>時間：<span th:text="${selectedTime}"></span></li>
+    <li>治療内容：<span th:text="${reservationType == 'treatment' ? '治療' : '定期検診'}"></span></li>
+    <li>一言メモ：<span th:text="${memo}"></span></li>
+</ul>
+
+<form th:action="@{/new/complete}" method="post">
+    <input type="hidden" name="patientName" th:value="${patientName}">
+    <input type="hidden" name="email" th:value="${email}">
+    <input type="hidden" name="phoneNumber" th:value="${phoneNumber}">
+    <input type="hidden" name="selectedDate" th:value="${selectedDate}">
+    <input type="hidden" name="selectedTime" th:value="${selectedTime}">
+    <input type="hidden" name="reservationType" th:value="${reservationType}">
+    <input type="hidden" name="memo" th:value="${memo}">
+    <button type="submit">予約を確定する</button>
+</form>
+
+<br>
+<form th:action="@{/new/select-date}" method="get">
+    <button type="submit">戻る</button>
+</form>
+
+</body>
+</html>
