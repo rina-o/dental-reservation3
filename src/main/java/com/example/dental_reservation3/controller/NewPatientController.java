@@ -183,7 +183,7 @@ public class NewPatientController {
             session.removeAttribute("inputPatientEmail");
             session.removeAttribute("inputPatientPhone");
             session.removeAttribute("inputPatientBirthday");
-            
+
         return "reservation-complete";
             
         } catch (Exception e) {

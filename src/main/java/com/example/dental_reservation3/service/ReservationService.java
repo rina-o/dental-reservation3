@@ -14,6 +14,9 @@ public interface ReservationService {
 
     List<Reservation> getReservationsByPatient(Patient patient);
 
+    // 現在時刻以降の予約を取得
+    List<Reservation> getFutureReservationsByPatient(Patient patient);
+
     List<LocalDate> getAvailableDates();
 
     List<LocalTime> getAvailableTimesForDate(LocalDate date);

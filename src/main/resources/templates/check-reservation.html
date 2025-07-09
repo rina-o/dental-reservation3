@@ -3,38 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <title>予約確認・変更</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .reservation-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        .reservation-info {
+            margin-bottom: 15px;
+        }
+        .reservation-info p {
+            margin: 5px 0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-logout {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-top {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-new {
+            background-color: #007bff;
+            color: white;
+            width: 100%;
+            margin-top: 30px;
+            font-size: 16px;
+        }
+        .no-reservations {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-<h2>予約内容の確認</h2>
+    <div class="header">
+        <h2>予約確認・変更</h2>
+        <div>
+            <a th:href="@{/logout}" class="btn btn-logout">ログアウト</a>
+            <a th:href="@{/}" class="btn btn-top">TOPへ</a>
+        </div>
+    </div>
 
 <!-- 名前表示 -->
 <p th:text="${loginPatient.name} + ' さんの現在の予約'"></p>
 
 <!-- 予約がある場合 -->
-<div th:if="${reservations != null}">
-    <div th:each="res : ${reservations}">
-        <p>日付：<span th:text="${res.reservationDate}"></span></p>
-        <p>時間：<span th:text="${res.reservationTime}"></span></p>
-        <p>種別：<span th:text="${res.type == 'treatment' ? '治療' : '定期検診'}"></span></p>
-        <p>メモ：<span th:text="${res.memo != null ? res.memo : '-'}"></span></p>
-        <form th:action="@{/reservation/cancel}" method="post" style="display: inline;">
-            <input type="hidden" name="reservationId" th:value="${res.id}">
-            <button type="submit">キャンセル</button>
+    <div th:if="${reservations != null && !reservations.isEmpty()}">
+        <div th:each="reservation : ${reservations}" class="reservation-card">
+            <div class="reservation-info">
+                <p><strong>予約日：</strong><span th:text="${#temporals.format(reservation.reservationDate, 'yyyy年MM月dd日')}"></span></p>
+                <p><strong>時間：</strong><span th:text="${#temporals.format(reservation.reservationTime, 'HH:mm')}"></span></p>
+                <p><strong>種別：</strong><span th:text="${reservation.type == 'treatment' ? '治療' : '定期検診'}"></span></p>
+                <p th:if="${reservation.memo != null && reservation.memo != ''}"><strong>メモ：</strong><span th:text="${reservation.memo}"></span></p>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/reservation/cancel}" method="post" style="display: inline;">
+                    <input type="hidden" name="reservationId" th:value="${reservation.id}">
+                    <button type="submit" class="btn btn-cancel" 
+                            onclick="return confirm('この予約をキャンセルしますか？')">キャンセル</button>
         </form>
-        <form th:action="@{/reservation/change}" method="get" style="display: inline;">
-            <button type="submit">変更</button>
-        </form>
-        <hr>
+            </div>
+        </div>
     </div>
-</div>
-
 
 <!-- 予約がない場合 -->
-<div th:if="${reservations == null || reservations.isEmpty()}">
-    <p>現在予約はありません。</p>
+    <div th:if="${reservations == null || reservations.isEmpty()}" class="no-reservations">
+        <h3>現在予約はありません</h3>
 </div>
 
-<br>
-<a th:href="@{/}">TOPに戻る</a>
+    <!-- 新しい予約をとるボタン（常に下に表示） -->
+    <div style="width: 100%; text-align: center;">
+        <a th:href="@{/reservation/select-date}" class="btn btn-new">新しい予約をとる</a>
+    </div>
 </body>
 </html>

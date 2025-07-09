@@ -25,15 +25,6 @@
     <li>一言メモ：<span th:text="${session.memo}"></span></li>
 </ul>
 
-<!-- デバッグ情報 -->
-<div style="background-color: #f0f0f0; padding: 10px; margin: 10px 0;">
-    <h4>デバッグ情報</h4>
-    <p>reservationType: <span th:text="${session.reservationType}"></span></p>
-    <p>reservationTypeの長さ: <span th:text="${session.reservationType != null ? session.reservationType.length() : 'null'}"></span></p>
-    <p>selectedDate: <span th:text="${session.selectedDate}"></span></p>
-    <p>selectedTime: <span th:text="${session.selectedTime}"></span></p>
-</div>
-
 <form th:action="@{/new/confirm}" method="post">
     <input type="hidden" name="name" th:value="${session.inputPatientName}">
     <input type="hidden" name="email" th:value="${session.inputPatientEmail}">

@@ -20,7 +20,7 @@ public class LoginController {
     private final PatientService patientService;
 
     @GetMapping("/login")
-    public String showLoginForm(@RequestParam(defaultValue = "/reservation/select-date") String redirect, Model model) {
+    public String showLoginForm(@RequestParam(defaultValue = "/check-reservation") String redirect, Model model) {
         model.addAttribute("redirect", redirect);
         return "login";
     }
@@ -29,7 +29,7 @@ public class LoginController {
     public String login(
             @RequestParam String emailOrId,
             @RequestParam String birthday,
-            @RequestParam(defaultValue = "/reservation/select-date") String redirect,
+            @RequestParam(defaultValue = "/check-reservation") String redirect,
             HttpSession session,
             Model model
     ) {

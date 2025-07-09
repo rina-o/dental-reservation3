@@ -65,6 +65,36 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<Reservation> getFutureReservationsByPatient(Patient patient) {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+        
+        List<Reservation> allReservations = reservationRepository.findByPatient(patient);
+        
+        return allReservations.stream()
+                .filter(reservation -> {
+                    LocalDate reservationDate = reservation.getReservationDate();
+                    LocalTime reservationTime = reservation.getReservationTime();
+                    
+                    // 今日の予約の場合は現在時刻以降かチェック
+                    if (reservationDate.equals(today)) {
+                        return reservationTime.isAfter(now);
+                    }
+                    // 未来の日付の予約は全て含める
+                    return reservationDate.isAfter(today);
+                })
+                .sorted((r1, r2) -> {
+                    // 日付、時間順でソート
+                    int dateCompare = r1.getReservationDate().compareTo(r2.getReservationDate());
+                    if (dateCompare != 0) {
+                        return dateCompare;
+                    }
+                    return r1.getReservationTime().compareTo(r2.getReservationTime());
+                })
+                .toList();
+    }
+
+    @Override
     public List<LocalDate> getAvailableDates() {
         List<LocalDate> availableDates = new ArrayList<>();
         LocalDate today = LocalDate.now();
@@ -89,9 +119,19 @@ public class ReservationServiceImpl implements ReservationService {
             times.add(LocalTime.of(hour, 0));
             times.add(LocalTime.of(hour, 30));
         }
-        return times.stream()
+        // 予約枠が埋まっていない時間のみ
+        List<LocalTime> available = times.stream()
                 .filter(time -> reservationRepository.countByReservationDateAndReservationTime(date, time) < 3)
+            .toList();
+
+        // ★本日なら現在時刻より前の時間を除外
+        if (date.equals(LocalDate.now())) {
+            LocalTime now = LocalTime.now();
+            available = available.stream()
+                .filter(time -> time.isAfter(now))
                 .toList();
+        }
+        return available;
     }
 
     @Override
