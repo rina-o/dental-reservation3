@@ -5,37 +5,39 @@
     <title>予約内容の確認</title>
 </head>
 <body>
+<!-- 再診の場合は患者名を表示 -->
+<div th:if="${loginPatient != null}">
+    <h2 th:text="${loginPatient.name} + 'さんの予約内容確認'">患者名さんの予約内容確認</h2>
+</div>
+
+<!-- 新患の場合は従来通り -->
+<div th:if="${loginPatient == null}">
 <h2>予約内容の確認</h2>
+</div>
 
-<p>お名前：<span th:text="${session.loginPatient.name}"></span> さん</p>
-<p>予約種別：<span th:text="${reservationType == 'treatment' ? '治療の続き' : '定期検診'}"></span></p>
-<p>日付：<span th:text="${selectedDate}"></span></p>
-<p>時間：<span th:text="${selectedTime}"></span></p>
+<h3>患者情報</h3>
+<ul>
+    <li>お名前：<span th:text="${loginPatient != null ? loginPatient.name : session.inputPatientName}"></span></li>
+    <li>メールアドレス：<span th:text="${loginPatient != null ? loginPatient.email : session.inputPatientEmail}"></span></li>
+    <li>電話番号：<span th:text="${loginPatient != null ? loginPatient.phone : session.inputPatientPhone}"></span></li>
+</ul>
 
+<h3>予約内容</h3>
+<ul>
+    <li>予約日：<span th:text="${session.selectedDate}"></span></li>
+    <li>時間：<span th:text="${session.selectedTime}"></span></li>
+    <li>治療内容：<span th:text="${session.reservationType == 'treatment' ? '治療' : '定期検診'}"></span></li>
+    <li>一言メモ：<span th:text="${session.memo}"></span></li>
+</ul>
 <form th:action="@{/reservation/complete}" method="post">
-    <input type="hidden" name="selectedDate" th:value="${selectedDate}">
-    <input type="hidden" name="selectedTime" th:value="${selectedTime}">
-
-    <p>その他ご希望など（任意）：</p>
-    <textarea name="memo" rows="3" cols="30" placeholder="例：子連れです、気になる箇所がありますなど"></textarea><br><br>
-
+    <input type="hidden" name="selectedDate" th:value="${session.selectedDate}">
+    <input type="hidden" name="selectedTime" th:value="${session.selectedTime}">
+    <input type="hidden" name="reservationType" th:value="${session.reservationType}">
+    <input type="hidden" name="memo" th:value="${session.memo}">
     <button type="submit">予約を確定する</button>
 </form>
-<!-- 再診者用 -->
-<div th:if="${session.loginPatient != null}">
-    <form th:action="@{/reservation/complete}" method="post">
-        ...
-        <button type="submit">予約を確定する</button>
-    </form>
-</div>
-
-<!-- 新患用 -->
-<div th:if="${session.loginPatient == null}">
-    <form th:action="@{/new/complete}" method="post">
-        ...
-        <button type="submit">予約を確定する</button>
-    </form>
-</div>
+<br>
+<a th:href="@{/}">TOPに戻る</a>
 
 </body>
 </html>

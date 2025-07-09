@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>患者種別の確認</title>
+</head>
+<body>
+<h2>患者種別の確認</h2>
+
+<p>以下の内容で予約を行います。</p>
+<ul>
+    <li>予約日：<span th:text="${session.selectedDate}"></span></li>
+    <li>時間：<span th:text="${session.selectedTime}"></span></li>
+    <li>治療内容：<span th:text="${session.reservationType == 'treatment' ? '治療' : '定期検診'}"></span></li>
+    <li>一言メモ：<span th:text="${session.memo}"></span></li>
+</ul>
+
+<p>どちらに該当しますか？</p>
+
+<form th:action="@{/new/input-info}" method="get">
+    <button type="submit">初めての方（新患）</button>
+</form>
+
+<form th:action="@{/login}" method="get">
+    <input type="hidden" name="redirect" value="/reservation/confirm">
+    <button type="submit">既に登録済みの方（再診）</button>
+</form>
+
+<br>
+<form th:action="@{/}" method="get">
+    <button type="submit">トップページへ戻る</button>
+</form>
+
+</body>
+</html> 

@@ -9,6 +9,6 @@ public interface PatientService {
 
     Patient registerNewPatient(Patient patient);
 
-    Optional<Patient> findByEmailOrPatientNumberAndBirthday(String inputValue, LocalDate birthday);
+    Optional<Patient> findByEmailOrPatientCodeAndBirthday(String inputValue, LocalDate birthday);
 }
 

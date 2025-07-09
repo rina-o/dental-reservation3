@@ -8,16 +8,24 @@
 <p th:text="${completeMessage}">予約が完了しました。</p>
 
 <p>以下の内容で予約を受け付けました。</p>
+
+<h3>患者情報</h3>
+<ul>
+    <li>お名前：<span th:text="${patientName}"></span></li>
+    <li>メールアドレス：<span th:text="${patientEmail}"></span></li>
+    <li>電話番号：<span th:text="${patientPhone}"></span></li>
+</ul>
+
+<h3>予約内容</h3>
 <ul>
     <li>日付：<span th:text="${reservedDate}"></span></li>
     <li>時間：<span th:text="${reservedTime}"></span></li>
+    <li>治療内容：<span th:text="${reservationType == 'treatment' ? '治療' : '定期検診'}"></span></li>
+    <li>一言メモ：<span th:text="${memo}"></span></li>
 </ul>
 
 <form th:action="@{/}" method="get">
     <button type="submit">トップページへ戻る</button>
-</form>
-<form th:action="@{/logout}" method="post">
-    <button type="submit">ログアウト</button>
 </form>
 
 </body>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約変更 - 日時選択</title>
+</head>
+<body>
+<h2>予約変更 - 新しい日時を選択してください</h2>
+
+<!-- 現在の予約情報表示 -->
+<div th:if="${currentReservation != null}">
+    <h3>現在の予約</h3>
+    <p>日付：<span th:text="${currentReservation.reservationDate}"></span></p>
+    <p>時間：<span th:text="${currentReservation.reservationTime}"></span></p>
+    <p>種別：<span th:text="${currentReservation.type == 'treatment' ? '治療' : '定期検診'}"></span></p>
+    <hr>
+</div>
+
+<form th:action="@{/reservation/confirm-change}" method="post">
+    <h3>新しい日時を選択</h3>
+    
+    <!-- 日付選択 -->
+    <label for="newDate">日付:</label>
+    <select name="newDate" id="newDate" required>
+        <option value="">日付を選択してください</option>
+        <option th:each="date : ${availableDates}" 
+                th:value="${date}" 
+                th:text="${date}">
+        </option>
+    </select>
+    <br><br>
+
+    <!-- 時間選択 -->
+    <label for="newTime">時間:</label>
+    <select name="newTime" id="newTime" required>
+        <option value="">時間を選択してください</option>
+        <option th:each="time : ${availableTimes}" 
+                th:value="${time}" 
+                th:text="${time}">
+        </option>
+    </select>
+    <br><br>
+
+    <button type="submit">確認画面へ</button>
+</form>
+
+<br>
+<a th:href="@{/check-reservation}">予約確認画面に戻る</a>
+
+<script>
+// 日付が選択されたときに時間を更新する処理
+document.getElementById('newDate').addEventListener('change', function() {
+    const selectedDate = this.value;
+    if (selectedDate) {
+        // フォームを再送信して時間を取得
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/reservation/change';
+        
+        const dateInput = document.createElement('input');
+        dateInput.type = 'hidden';
+        dateInput.name = 'newDate';
+        dateInput.value = selectedDate;
+        
+        form.appendChild(dateInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+});
+</script>
+
+</body>
+</html> 

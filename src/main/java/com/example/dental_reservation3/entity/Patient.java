@@ -21,7 +21,8 @@ public class Patient {
     @Column(nullable = false, unique = true)
     private String email;  // メールアドレス（ログインに使用）
 
-    private String phoneNumber;  // 電話番号（任意）
+    @Column(name = "phone_number")
+    private String phone;  // 電話番号（任意）
 
     @Column(nullable = false)
     private LocalDate birthday;  // 生年月日（yyyy-MM-dd）

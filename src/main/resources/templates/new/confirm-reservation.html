@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>予約内容の確認（新患）</title>
+</head>
+<body>
+<h2>予約内容の確認</h2>
+
+<p>以下の内容で予約を行います。よろしければ「予約を確定する」を押してください。</p>
+
+<h3>患者情報</h3>
+<ul>
+    <li>お名前：<span th:text="${session.inputPatientName}"></span></li>
+    <li>メールアドレス：<span th:text="${session.inputPatientEmail}"></span></li>
+    <li>電話番号：<span th:text="${session.inputPatientPhone}"></span></li>
+    <li>生年月日：<span th:text="${session.inputPatientBirthday}"></span></li>
+</ul>
+
+<h3>予約内容</h3>
+<ul>
+    <li>予約日：<span th:text="${session.selectedDate}"></span></li>
+    <li>時間：<span th:text="${session.selectedTime}"></span></li>
+    <li>治療内容：<span th:text="${session.reservationType == 'treatment' ? '治療' : '定期検診'}"></span></li>
+    <li>一言メモ：<span th:text="${session.memo}"></span></li>
+</ul>
+
+<!-- デバッグ情報 -->
+<div style="background-color: #f0f0f0; padding: 10px; margin: 10px 0;">
+    <h4>デバッグ情報</h4>
+    <p>reservationType: <span th:text="${session.reservationType}"></span></p>
+    <p>reservationTypeの長さ: <span th:text="${session.reservationType != null ? session.reservationType.length() : 'null'}"></span></p>
+    <p>selectedDate: <span th:text="${session.selectedDate}"></span></p>
+    <p>selectedTime: <span th:text="${session.selectedTime}"></span></p>
+</div>
+
+<form th:action="@{/new/confirm}" method="post">
+    <input type="hidden" name="name" th:value="${session.inputPatientName}">
+    <input type="hidden" name="email" th:value="${session.inputPatientEmail}">
+    <input type="hidden" name="phone" th:value="${session.inputPatientPhone}">
+    <input type="hidden" name="birthday" th:value="${session.inputPatientBirthday}">
+    <button type="submit">予約を確定する</button>
+</form>
+
+<br>
+<form th:action="@{/new/input-info}" method="get">
+    <button type="submit">戻る</button>
+</form>
+
+<br>
+<form th:action="@{/}" method="get">
+    <button type="submit">トップページへ戻る</button>
+</form>
+
+</body>
+</html> 

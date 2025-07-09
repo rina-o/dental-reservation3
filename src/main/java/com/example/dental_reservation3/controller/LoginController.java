@@ -20,7 +20,7 @@ public class LoginController {
     private final PatientService patientService;
 
     @GetMapping("/login")
-    public String showLoginForm(@RequestParam(defaultValue = "/select-treatment") String redirect, Model model) {
+    public String showLoginForm(@RequestParam(defaultValue = "/reservation/select-date") String redirect, Model model) {
         model.addAttribute("redirect", redirect);
         return "login";
     }
@@ -29,7 +29,7 @@ public class LoginController {
     public String login(
             @RequestParam String emailOrId,
             @RequestParam String birthday,
-            @RequestParam(defaultValue = "/select-treatment") String redirect,
+            @RequestParam(defaultValue = "/reservation/select-date") String redirect,
             HttpSession session,
             Model model
     ) {
@@ -40,7 +40,7 @@ public class LoginController {
 
             // ✅ 修正済：emailまたは患者番号 + 生年月日で検索
             Optional<Patient> optionalPatient =
-                    patientService.findByEmailOrPatientNumberAndBirthday(emailOrId, birthdayDate);
+                    patientService.findByEmailOrPatientCodeAndBirthday(emailOrId, birthdayDate);
 
             if (optionalPatient.isPresent()) {
                 session.setAttribute("loginPatient", optionalPatient.get());
@@ -58,20 +58,21 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/select-treatment")
-    public String showSelectTreatment(HttpSession session, Model model) {
-        Patient loginPatient = (Patient) session.getAttribute("loginPatient");
-        if (loginPatient == null) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("loginPatient", loginPatient);
-        return "select-treatment";
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        // セッションからログイン患者情報を削除
+        session.removeAttribute("loginPatient");
+        // 予約関連のセッション情報も削除
+        session.removeAttribute("selectedDate");
+        session.removeAttribute("selectedTime");
+        session.removeAttribute("reservationType");
+        session.removeAttribute("memo");
+        session.removeAttribute("inputPatientName");
+        session.removeAttribute("inputPatientEmail");
+        session.removeAttribute("inputPatientPhone");
+        session.removeAttribute("inputPatientBirthday");
+        
+        return "redirect:/";
     }
 
-    @PostMapping("/select-treatment")
-    public String selectTreatment(@RequestParam String type, HttpSession session) {
-        session.setAttribute("reservationType", type);
-        return "redirect:/select-date";
-    }
 }

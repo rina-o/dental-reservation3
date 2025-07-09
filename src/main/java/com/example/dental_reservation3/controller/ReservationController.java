@@ -16,79 +16,203 @@ import com.example.dental_reservation3.service.MailService;
 
 
 @Controller
-@RequestMapping("/reservation")
 @RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
     private final MailService mailService;
-    // ▼ 1. 通常予約フロー ▼
 
-    @GetMapping("/select-date")
-    public String showSelectDate(Model model, HttpSession session) {
-        Patient patient = (Patient) session.getAttribute("loginPatient");
-        if (patient == null) return "redirect:/login";
-
+    // 新患用の日時選択画面
+    @GetMapping("/select-date-time")
+    public String showSelectDateTime(Model model) {
         model.addAttribute("availableDates", reservationService.getAvailableDates());
         model.addAttribute("selectedDate", null);
         model.addAttribute("availableTimes", null);
         return "select-date-time";
     }
 
-    @PostMapping("/select-date")
-    public String postSelectDate(@RequestParam String selectedDate, Model model, HttpSession session) {
-        session.setAttribute("selectedDate", selectedDate);
-        LocalDate date = LocalDate.parse(selectedDate);
-        model.addAttribute("availableDates", reservationService.getAvailableDates());
-        model.addAttribute("selectedDate", selectedDate);
-        model.addAttribute("availableTimes", reservationService.getAvailableTimesForDate(date));
-        return "select-date-time";
-    }
-
-    @PostMapping("/confirm")
-    public String confirmReservation(@RequestParam String selectedTime, HttpSession session, Model model) {
-        String selectedDate = (String) session.getAttribute("selectedDate");
-        String reservationType = (String) session.getAttribute("reservationType");
-        model.addAttribute("selectedDate", selectedDate);
-        model.addAttribute("selectedTime", selectedTime);
-        model.addAttribute("reservationType", reservationType);
-        return "confirm-reservation";
-    }
-
-    // 完了画面に遷移する予約確定処理
-    @PostMapping("/complete")
-    public String completeReservation(
-            @RequestParam String selectedDate,
-            @RequestParam String selectedTime,
-            @RequestParam(required = false) String memo,
-            HttpSession session,
-            Model model) {
-
-        Patient patient = (Patient) session.getAttribute("loginPatient");
-        if (patient == null) {
+    // 再診用の日時選択画面
+    @GetMapping("/reservation/select-date")
+    public String showSelectDateForReturningPatient(HttpSession session, Model model) {
+        Patient loginPatient = (Patient) session.getAttribute("loginPatient");
+        if (loginPatient == null) {
             return "redirect:/login";
         }
 
-        Reservation.ReservationType type =
-                Reservation.ReservationType.valueOf((String) session.getAttribute("reservationType"));
+        model.addAttribute("loginPatient", loginPatient);
+        model.addAttribute("availableDates", reservationService.getAvailableDates());
+        model.addAttribute("selectedDate", null);
+        model.addAttribute("availableTimes", null);
+        return "select-date-time";
+    }
 
-        LocalDate date = LocalDate.parse(selectedDate);
-        LocalTime time = LocalTime.parse(selectedTime);
+    // 新患用の日付選択後の時間表示
+    @PostMapping("/select-date-time")
+    public String processSelectDateTime(
+            @RequestParam String selectedDate,
+            @RequestParam String reservationType,
+            Model model) {
+        
+        System.out.println("Selected Date: " + selectedDate);
+        System.out.println("Reservation Type: " + reservationType);
+        
+        List<LocalTime> availableTimes = reservationService.getAvailableTimesForDate(LocalDate.parse(selectedDate));
+        System.out.println("Available Times: " + availableTimes);
+        
+        model.addAttribute("availableDates", reservationService.getAvailableDates());
+        model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("reservationType", reservationType);
+        model.addAttribute("availableTimes", availableTimes);
+        return "select-date-time";
+    }
 
-        reservationService.reserve(patient, date, time, type, memo);
+    // 再診用の日付選択後の時間表示
+    @PostMapping("/reservation/select-date")
+    public String processSelectDateForReturningPatient(
+            @RequestParam String selectedDate,
+            @RequestParam String reservationType,
+            HttpSession session,
+            Model model) {
+        
+        Patient loginPatient = (Patient) session.getAttribute("loginPatient");
+        if (loginPatient == null) {
+            return "redirect:/login";
+        }
+        
+        System.out.println("Selected Date: " + selectedDate);
+        System.out.println("Reservation Type: " + reservationType);
+        
+        List<LocalTime> availableTimes = reservationService.getAvailableTimesForDate(LocalDate.parse(selectedDate));
+        System.out.println("Available Times: " + availableTimes);
+        
+        model.addAttribute("loginPatient", loginPatient);
+        model.addAttribute("availableDates", reservationService.getAvailableDates());
+        model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("reservationType", reservationType);
+        model.addAttribute("availableTimes", availableTimes);
+        return "select-date-time";
+    }
 
-        // ★ メール送信処理を追加 ★
+    // 新患・再診分岐画面への遷移
+    @PostMapping("/entry")
+    public String entryReservation(
+            @RequestParam String selectedDate,
+            @RequestParam String selectedTime,
+            @RequestParam String reservationType,
+            @RequestParam(required = false) String memo,
+            HttpSession session) {
+
+        // セッションに予約情報を保存
+        session.setAttribute("selectedDate", selectedDate);
+        session.setAttribute("selectedTime", selectedTime);
+        session.setAttribute("reservationType", reservationType);
+        session.setAttribute("memo", memo);
+
+        // 新患・再診分岐画面へ
+        return "identify";
+    }
+
+    // 再診用の予約確定処理
+    @PostMapping("/reservation/complete")
+    public String completeReturningPatientReservation(HttpSession session, Model model) {
+        Patient loginPatient = (Patient) session.getAttribute("loginPatient");
+        if (loginPatient == null) {
+            return "redirect:/login";
+        }
+
+        String selectedDate = (String) session.getAttribute("selectedDate");
+        String selectedTime = (String) session.getAttribute("selectedTime");
+        String reservationType = (String) session.getAttribute("reservationType");
+        String memo = (String) session.getAttribute("memo");
+        
+        // デバッグ情報をログ出力
+        System.out.println("=== 予約確定処理のデバッグ情報 ===");
+        System.out.println("selectedDate: " + selectedDate);
+        System.out.println("selectedTime: " + selectedTime);
+        System.out.println("reservationType: " + reservationType);
+        System.out.println("memo: " + memo);
+        System.out.println("loginPatient: " + loginPatient.getName());
+        
+        // セッションの全属性をログ出力
+        System.out.println("セッションの全属性:");
+        java.util.Enumeration<String> sessionAttributes = session.getAttributeNames();
+        while (sessionAttributes.hasMoreElements()) {
+            String attrName = sessionAttributes.nextElement();
+            Object attrValue = session.getAttribute(attrName);
+            System.out.println("  " + attrName + " = " + attrValue);
+        }
+
+        // セッション情報の検証
+        if (selectedDate == null || selectedTime == null || reservationType == null) {
+            System.out.println("セッション情報が不足しています");
+            model.addAttribute("error", "予約情報が正しく設定されていません。最初からやり直してください。");
+            return "error";
+        }
+        
+        try {
+            // 予約処理
+            reservationService.reserve(
+                loginPatient,
+                LocalDate.parse(selectedDate),
+                LocalTime.parse(selectedTime),
+                Reservation.ReservationType.valueOf(reservationType),
+                memo
+            );
+
+            // メール送信
         mailService.sendReservationConfirmation(
-                patient.getEmail(),
-                patient.getName(),
+                loginPatient.getEmail(),
+                loginPatient.getName(),
                 selectedDate,
                 selectedTime
         );
+
+            // セッションクリア
+            session.removeAttribute("selectedDate");
+            session.removeAttribute("selectedTime");
+            session.removeAttribute("reservationType");
+            session.removeAttribute("memo");
+            // ログイン患者情報も削除（予約完了後はログアウト）
+            session.removeAttribute("loginPatient");
 
         model.addAttribute("reservedDate", selectedDate);
         model.addAttribute("reservedTime", selectedTime);
         model.addAttribute("completeMessage", "予約が完了しました");
         return "reservation-complete";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "予約処理中にエラーが発生しました: " + e.getMessage());
+            return "error";
+        }
+    }
+
+    // 再診用の確認画面表示
+    @PostMapping("/confirm")
+    public String confirmReservation(
+            @RequestParam String selectedTime,
+            @RequestParam String selectedDate,
+            @RequestParam String reservationType,
+            @RequestParam(required = false) String memo,
+            HttpSession session, 
+            Model model) {
+        
+        Patient loginPatient = (Patient) session.getAttribute("loginPatient");
+        if (loginPatient == null) {
+            return "redirect:/login";
+        }
+
+        // セッションに予約情報を保存
+        session.setAttribute("selectedDate", selectedDate);
+        session.setAttribute("selectedTime", selectedTime);
+        session.setAttribute("reservationType", reservationType);
+        session.setAttribute("memo", memo);
+
+        model.addAttribute("loginPatient", loginPatient);
+        model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("selectedTime", selectedTime);
+        model.addAttribute("reservationType", reservationType);
+        model.addAttribute("memo", memo);
+        return "confirm-reservation";
     }
 
     // ▼ 2. 予約確認画面 ▼
@@ -140,23 +264,34 @@ public class ReservationController {
         if (patient == null) return "redirect:/login";
 
         List<Reservation> reservations = reservationService.getReservationsByPatient(patient);
-        if (reservations.isEmpty()) return "redirect:/reservation/check-reservation";
+        if (reservations.isEmpty()) return "redirect:/check-reservation";
 
         Reservation current = reservations.get(0);
         session.setAttribute("currentReservation", current);
 
+        model.addAttribute("currentReservation", current);
         model.addAttribute("availableDates", reservationService.getAvailableDates());
         model.addAttribute("selectedDate", null);
         model.addAttribute("availableTimes", null);
         return "change-select-date-time";
     }
 
-    @PostMapping("/change/select")
-    public String postChangeDate(@RequestParam String selectedDate, HttpSession session, Model model) {
-        LocalDate date = LocalDate.parse(selectedDate);
+    @PostMapping("/change")
+    public String processChangeDate(@RequestParam String newDate, HttpSession session, Model model) {
+        Patient patient = (Patient) session.getAttribute("loginPatient");
+        if (patient == null) return "redirect:/login";
+
+        List<Reservation> reservations = reservationService.getReservationsByPatient(patient);
+        if (reservations.isEmpty()) return "redirect:/check-reservation";
+
+        Reservation current = reservations.get(0);
+        LocalDate date = LocalDate.parse(newDate);
+        List<LocalTime> availableTimes = reservationService.getAvailableTimesForDate(date);
+
+        model.addAttribute("currentReservation", current);
         model.addAttribute("availableDates", reservationService.getAvailableDates());
-        model.addAttribute("selectedDate", selectedDate);
-        model.addAttribute("availableTimes", reservationService.getAvailableTimesForDate(date));
+        model.addAttribute("selectedDate", newDate);
+        model.addAttribute("availableTimes", availableTimes);
         return "change-select-date-time";
     }
 
@@ -171,7 +306,7 @@ public class ReservationController {
         if (patient == null) return "redirect:/login";
 
         List<Reservation> reservations = reservationService.getReservationsByPatient(patient);
-        if (reservations.isEmpty()) return "redirect:/reservation/check-reservation";
+        if (reservations.isEmpty()) return "redirect:/check-reservation";
 
         Reservation oldReservation = reservations.get(0);
         model.addAttribute("oldReservation", oldReservation);
@@ -191,7 +326,7 @@ public class ReservationController {
         if (patient == null) return "redirect:/login";
 
         List<Reservation> reservations = reservationService.getReservationsByPatient(patient);
-        if (reservations.isEmpty()) return "redirect:/reservation/check-reservation";
+        if (reservations.isEmpty()) return "redirect:/check-reservation";
 
         Reservation oldReservation = reservations.get(0);
         reservationService.cancelReservation(oldReservation);

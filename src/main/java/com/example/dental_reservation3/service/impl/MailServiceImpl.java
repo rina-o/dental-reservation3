@@ -18,6 +18,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public void sendReservationConfirmation(String toEmail, String patientName, String reservationDate, String reservationTime) {
+        try {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
@@ -34,10 +35,15 @@ public class MailServiceImpl implements MailService {
         );
 
         mailSender.send(message);
+        } catch (Exception e) {
+            // メール送信に失敗しても予約処理は続行
+            System.err.println("メール送信に失敗しました: " + e.getMessage());
+        }
     }
 
     @Override
     public void sendReservationNotification(String toEmail, String patientName, String subject, String messageBody) {
+        try {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
@@ -51,7 +57,9 @@ public class MailServiceImpl implements MailService {
                         "スマイル歯科"
         );
         mailSender.send(message);
+        } catch (Exception e) {
+            // メール送信に失敗しても処理は続行
+            System.err.println("メール送信に失敗しました: " + e.getMessage());
+        }
     }
-
-
 }

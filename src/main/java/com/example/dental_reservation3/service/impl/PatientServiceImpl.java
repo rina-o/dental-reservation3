@@ -24,9 +24,7 @@ public class PatientServiceImpl implements PatientService {
     }
     // PatientServiceImpl.java にこれがあるかどうか
     @Override
-    public Optional<Patient> findByEmailOrPatientNumberAndBirthday(String inputValue, LocalDate birthday) {
-        return patientRepository.findByEmailOrPatientNumberAndBirthday(inputValue, birthday);
+    public Optional<Patient> findByEmailOrPatientCodeAndBirthday(String inputValue, LocalDate birthday) {
+        return patientRepository.findByEmailOrPatientCodeAndBirthday(inputValue, birthday);
     }
-
-
 }

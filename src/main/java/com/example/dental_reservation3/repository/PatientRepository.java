@@ -10,12 +10,14 @@ import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<Patient, Integer> {
 
+    Optional<Patient> findByEmail(String email);
+
     Optional<Patient> findByEmailAndBirthday(String email, LocalDate birthday);
 
-    Optional<Patient> findByPatientNumberAndBirthday(String patientNumber, LocalDate birthday);
+    Optional<Patient> findByPatientCodeAndBirthday(String patientCode, LocalDate birthday);
 
-    @Query("SELECT p FROM Patient p WHERE (p.email = :value OR p.patientNumber = :value) AND p.birthday = :birthday")
-    Optional<Patient> findByEmailOrPatientNumberAndBirthday(
+    @Query("SELECT p FROM Patient p WHERE (p.email = :value OR p.patientCode = :value) AND p.birthday = :birthday")
+    Optional<Patient> findByEmailOrPatientCodeAndBirthday(
             @Param("value") String value,
             @Param("birthday") LocalDate birthday
     );

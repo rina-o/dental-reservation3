@@ -5,6 +5,7 @@ import com.example.dental_reservation3.entity.Reservation;
 import com.example.dental_reservation3.repository.PatientRepository;
 import com.example.dental_reservation3.repository.ReservationRepository;
 import com.example.dental_reservation3.service.ReservationService;
+import com.example.dental_reservation3.exception.ReservationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,13 +32,31 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void reserve(Patient patient, LocalDate date, LocalTime time, Reservation.ReservationType type, String memo) {
+        System.out.println("=== reserve開始 ===");
+        System.out.println("予約可能チェック: " + date + ", " + time);
+        
+        try {
+            if (!canReserve(date, time)) {
+                throw new ReservationException("この時間枠は定員に達しています。他の時間を選択してください。");
+            }
+            
         Reservation reservation = new Reservation();
         reservation.setPatient(patient);
         reservation.setReservationDate(date);
         reservation.setReservationTime(time);
         reservation.setType(type);
         reservation.setMemo(memo);
-        reservationRepository.save(reservation);
+            
+            System.out.println("予約オブジェクト作成: " + reservation);
+            Reservation savedReservation = reservationRepository.save(reservation);
+            System.out.println("予約保存完了: ID=" + savedReservation.getId());
+            System.out.println("=== reserve完了 ===");
+        } catch (Exception e) {
+            System.err.println("reserveでエラーが発生しました: " + e.getMessage());
+            System.err.println("エラーの種類: " + e.getClass().getSimpleName());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
@@ -86,9 +106,37 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void registerNewPatientWithReservation(Patient patient, LocalDate date, LocalTime time, Reservation.ReservationType type, String memo) {
+        System.out.println("=== registerNewPatientWithReservation開始 ===");
+        System.out.println("患者情報: " + patient.getName() + ", " + patient.getEmail() + ", " + patient.getPhone() + ", " + patient.getBirthday());
+        System.out.println("予約情報: " + date + ", " + time + ", " + type + ", " + memo);
+        
+        try {
+            // 既存の患者をメールアドレスで検索
+            Optional<Patient> existingPatientOpt = patientRepository.findByEmail(patient.getEmail());
+            
+            if (existingPatientOpt.isPresent()) {
+                Patient existingPatient = existingPatientOpt.get();
+                System.out.println("既存の患者が見つかりました: ID=" + existingPatient.getId());
+                // 既存の患者情報を使用
+                patient = existingPatient;
+            } else {
+                System.out.println("新規患者として登録します");
         String generatedCode = "P" + UUID.randomUUID().toString().substring(0, 8);
         patient.setPatientCode(generatedCode);
-        patientRepository.save(patient);
+                System.out.println("患者コード生成: " + generatedCode);
+                
+                Patient savedPatient = patientRepository.save(patient);
+                System.out.println("患者情報保存完了: ID=" + savedPatient.getId());
+            }
+            
         reserve(patient, date, time, type, memo);
+            System.out.println("予約情報保存完了");
+            System.out.println("=== registerNewPatientWithReservation完了 ===");
+        } catch (Exception e) {
+            System.err.println("registerNewPatientWithReservationでエラーが発生しました: " + e.getMessage());
+            System.err.println("エラーの種類: " + e.getClass().getSimpleName());
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

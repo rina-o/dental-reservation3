@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>エラー</title>
+</head>
+<body>
+<h2>エラーが発生しました</h2>
+
+<div th:if="${error}">
+    <p><strong>エラー内容：</strong></p>
+    <p th:text="${error}"></p>
+</div>
+
+<div th:if="${message}">
+    <p><strong>メッセージ：</strong></p>
+    <p th:text="${message}"></p>
+</div>
+
+<div th:if="${timestamp}">
+    <p><strong>発生時刻：</strong></p>
+    <p th:text="${timestamp}"></p>
+</div>
+
+<form th:action="@{/}" method="get">
+    <button type="submit">トップページへ戻る</button>
+</form>
+
+</body>
+</html> 

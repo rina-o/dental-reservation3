@@ -5,9 +5,40 @@
     <title>日付と時間の選択</title>
 </head>
 <body>
-<h2>予約日と時間の選択</h2>
+<!-- 再診の場合は患者名を表示 -->
+<div th:if="${loginPatient != null}">
+    <h2 th:text="${loginPatient.name} + 'さん、こんにちは！'">患者名さん、こんにちは！</h2>
+    <p>予約日と時間を選択してください</p>
+</div>
 
-<form th:action="@{${actionUrl}}" method="post">
+<!-- 新患の場合は従来通り -->
+<div th:if="${loginPatient == null}">
+<h2>予約日と時間の選択</h2>
+</div>
+
+<!-- 新患用の治療内容・日付選択フォーム -->
+<form th:if="${loginPatient == null}" th:action="@{/select-date-time}" method="post">
+    <!-- 治療内容選択 -->
+    <label>希望内容：</label>
+    <input type="radio" name="reservationType" value="treatment" required checked> 治療
+    <input type="radio" name="reservationType" value="checkup"> 定期検診
+    <br><br>
+    
+    <!-- 日付選択 -->
+    <label for="selectedDate">日付を選択：</label>
+    <select name="selectedDate" id="selectedDate" required>
+        <option th:each="date : ${availableDates}"
+                th:value="${date}"
+                th:text="${date}"
+                th:selected="${selectedDate} == ${date}">
+        </option>
+    </select>
+    <button type="submit">空き時間を表示</button>
+</form>
+
+<!-- 再診用の日付選択フォーム -->
+<form th:if="${loginPatient != null}" th:action="@{/reservation/select-date}" method="post">
+    <input type="hidden" name="reservationType" value="treatment">
     <!-- 日付選択 -->
     <label for="selectedDate">日付を選択：</label>
     <select name="selectedDate" id="selectedDate" required>
@@ -22,14 +53,41 @@
 
 <!-- 時間選択 -->
 <div th:if="${availableTimes != null}">
-    <form th:action="@{${confirmUrl}}" method="post">
+    <!-- 新患用の時間選択フォーム -->
+    <form th:if="${loginPatient == null}" th:action="@{/entry}" method="post">
+        <input type="hidden" name="reservationType" th:value="${reservationType}">
+        <input type="hidden" name="selectedDate" th:value="${selectedDate}">
         <p>空いている時間帯：</p>
         <div th:each="time : ${availableTimes}">
             <input type="radio" name="selectedTime" th:value="${time}" required>
             <label th:text="${time}"></label><br>
         </div>
-        <button type="submit">確認画面へ</button>
+        <label for="memo">一言メモ（任意）：</label>
+        <textarea name="memo" id="memo" rows="3" cols="50"></textarea><br><br>
+        <button type="submit">次へ</button>
     </form>
+
+    <!-- 再診用の時間選択フォーム -->
+    <form th:if="${loginPatient != null}" th:action="@{/confirm}" method="post">
+        <input type="hidden" name="selectedDate" th:value="${selectedDate}">
+        <input type="hidden" name="reservationType" th:value="${reservationType}">
+        <p>空いている時間帯：</p>
+        <div th:each="time : ${availableTimes}">
+            <input type="radio" name="selectedTime" th:value="${time}" required>
+            <label th:text="${time}"></label><br>
+        </div>
+        <label for="memo">一言メモ（任意）：</label>
+        <textarea name="memo" id="memo" rows="3" cols="50"></textarea><br><br>
+        <button type="submit">予約確認</button>
+    </form>
+</div>
+
+<!-- デバッグ情報 -->
+<div th:if="${availableTimes == null}">
+    <p>デバッグ情報：</p>
+    <p>selectedDate: <span th:text="${selectedDate}"></span></p>
+    <p>reservationType: <span th:text="${reservationType}"></span></p>
+    <p>availableTimes: <span th:text="${availableTimes}"></span></p>
 </div>
 
 <br>

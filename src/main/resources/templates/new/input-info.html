@@ -7,23 +7,23 @@
 <body>
 <h2>患者情報の入力</h2>
 
-<form th:action="@{/new/input-info}" method="post">
+<form th:action="@{/new/input-info}" method="post" th:object="${patientRequest}">
     <input type="hidden" name="selectedDate" th:value="${selectedDate}">
     <input type="hidden" name="selectedTime" th:value="${selectedTime}">
     <input type="hidden" name="reservationType" th:value="${reservationType}">
     <input type="hidden" name="memo" th:value="${memo}">
 
     <label>お名前：</label><br>
-    <input type="text" name="name" required><br><br>
+    <input type="text" th:field="*{name}" required><br><br>
 
     <label>メールアドレス：</label><br>
-    <input type="email" name="email" required><br><br>
+    <input type="email" th:field="*{email}" required><br><br>
 
     <label>電話番号：</label><br>
-    <input type="tel" name="phone" required><br><br>
+    <input type="tel" th:field="*{phone}" required><br><br>
 
     <label>生年月日（例：19890101）：</label><br>
-    <input type="text" name="birthday" pattern="\\d{8}" required><br><br>
+    <input type="text" th:field="*{birthday}" pattern="\d{8}" title="8桁の数字（例：19900101）で入力してください" placeholder="19890101" required><br><br>
 
     <button type="submit">確認画面へ</button>
 </form>

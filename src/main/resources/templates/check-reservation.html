@@ -17,9 +17,12 @@
         <p>時間：<span th:text="${res.reservationTime}"></span></p>
         <p>種別：<span th:text="${res.type == 'treatment' ? '治療' : '定期検診'}"></span></p>
         <p>メモ：<span th:text="${res.memo != null ? res.memo : '-'}"></span></p>
-        <form th:action="@{/reservation/cancel}" method="post">
+        <form th:action="@{/reservation/cancel}" method="post" style="display: inline;">
             <input type="hidden" name="reservationId" th:value="${res.id}">
             <button type="submit">キャンセル</button>
+        </form>
+        <form th:action="@{/reservation/change}" method="get" style="display: inline;">
+            <button type="submit">変更</button>
         </form>
         <hr>
     </div>
@@ -27,14 +30,9 @@
 
 
 <!-- 予約がない場合 -->
-<div th:if="${reservation == null}">
+<div th:if="${reservations == null || reservations.isEmpty()}">
     <p>現在予約はありません。</p>
 </div>
-<td>
-    <form th:action="@{/reservation/cancel}" method="post">
-        <button type="submit">キャンセル</button>
-    </form>
-</td>
 
 <br>
 <a th:href="@{/}">TOPに戻る</a>
