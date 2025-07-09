@@ -82,14 +82,6 @@
     </form>
 </div>
 
-<!-- デバッグ情報 -->
-<div th:if="${availableTimes == null}">
-    <p>デバッグ情報：</p>
-    <p>selectedDate: <span th:text="${selectedDate}"></span></p>
-    <p>reservationType: <span th:text="${reservationType}"></span></p>
-    <p>availableTimes: <span th:text="${availableTimes}"></span></p>
-</div>
-
 <br>
 <a th:href="@{/}">TOPに戻る</a>
 </body>

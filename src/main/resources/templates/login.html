@@ -8,6 +8,7 @@
 <h2>ログイン</h2>
 
 <form th:action="@{/login}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     <!-- メールアドレスまたは患者番号 -->
     <input type="text" name="emailOrId" placeholder="メールまたは患者番号" required><br>
 

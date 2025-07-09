@@ -8,6 +8,7 @@
 <h2>患者情報の入力</h2>
 
 <form th:action="@{/new/input-info}" method="post" th:object="${patientRequest}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     <input type="hidden" name="selectedDate" th:value="${selectedDate}">
     <input type="hidden" name="selectedTime" th:value="${selectedTime}">
     <input type="hidden" name="reservationType" th:value="${reservationType}">

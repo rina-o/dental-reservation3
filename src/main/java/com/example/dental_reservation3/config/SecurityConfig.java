@@ -10,7 +10,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // POSTを通すためにCSRF無効化（本番では検討要）
+                // .csrf(csrf -> csrf.disable()) // POSTを通すためにCSRF無効化（本番では検討要）
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/logout", "/css/**", "/js/**").permitAll()
                         .anyRequest().permitAll() // 全部自作で制御するならここもpermitAll()
