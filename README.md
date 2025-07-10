@@ -11,6 +11,11 @@
  対応画面　   	：新患予約/患者情報仮登録・再診ログイン・日時選択・確認画面・予約完了・予約確認・変更・キャンセル
 
 
+AI活用について
+
+本プロジェクトは、ChatGPTやCursorといったAIツールのサポートを受けながら構築しました。  
+私自身が開発の方向性や仕様を決定し、AIと協力する形で要件の整理や調整、実装方針の検討を行いながら、システムを完成させました。  
+
 
 使用技術
 
@@ -18,16 +23,8 @@
 フロントエンド	：Thymeleaf / HTML / CSS（最低限）   
 データベース 		：MySQL   
 開発ツール 		：IntelliJ IDEA / DBeaver / Git / GitHub   
-その他 			：Spring Security（簡易ログイン）、JavaMailSender（予約完了メール送信） 、Lombok、Spring Session
-
-
-開発支援・活用ツール
-
-　このプロジェクトは以下のツールを活用しながら開発しました。  
-	ChatGPT（GPT-4）						：全体構成や仕様確認に活用  
-	Cursor（AIペアプログラミングエディタ）	：バリデーション・デバッグ・セキュリティなど。（時間短縮を目的とする）  
+その他 			：Spring Security（簡易ログイン）、JavaMailSender（予約完了メール送信） 、Lombok、Spring Session   
 	
-
 
 主な機能
 
