@@ -111,8 +111,8 @@ public class ReservationController {
         session.setAttribute("reservationType", reservationType);
         session.setAttribute("memo", memo);
 
-        // 新患・再診分岐画面へ
-        return "identify";
+        // 新患は直接個人情報入力画面へリダイレクト
+        return "redirect:/new/input-info";
     }
 
     // 再診用の予約確定処理
