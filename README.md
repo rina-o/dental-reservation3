@@ -26,6 +26,31 @@ AI活用について
 その他 			：Spring Security（簡易ログイン）、JavaMailSender（予約完了メール送信） 、Lombok、Spring Session   
 	
 
+  環境変数の設定（.env.example）
+
+このアプリでは、**メール送信やデータベース接続**のために `.env` ファイルを使用しています。  
+セキュリティ保護のため `.env` はGitに含めていませんが、テンプレートとして `.env.example` を同梱しています。
+
+ ### `.env` の作成手順
+
+```bash
+cp .env.example .env
+```
+
+### `.env` の記述例
+
+```env
+DB_USERNAME=root
+DB_PASSWORD=your_mysql_password
+
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_app_specific_password
+```
+
+※ Gmailの送信用パスワードには「アプリパスワード」を使ってください。通常のパスワードでは送信できません。
+
+
+
 主な機能
 
 ・新患予約  
@@ -101,10 +126,10 @@ src/
 　元歯科衛生士の実体験を活かし、「現場で本当に必要な予約機能」を意識して設計中。  
 
 
- 作者
+ ## 作者
 
-　Rina O.   
-　GitHub: [@rina-o](https://github.com/rina-o)  
+**Rina O.**  
+GitHub: [@rina-o](https://github.com/rina-o)
 
 
 今後の改善予定
